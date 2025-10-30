@@ -9,16 +9,12 @@ import Header from "./partials/Header"; // Adjust path if needed
 import StarsBackground from "@/components/StarsBackground";
 import ContactForm from "@/components/ContactForm";
 import ServicesSection from "@/components/sections/ServicesSection";
+import WhyUsSection from "@/components/sections/WhyUsSection"; // --- IMPORT NEW SECTION ---
 import PortfolioSection from "@/components/sections/PortfolioSection";
 import PricingSection from "@/components/sections/PricingSection";
 import TestimonialsSection from "@/components/sections/TestimonialSection";
 import ClientLogosSection from "@/components/sections/ClientLogosSection";
 import Footer from "./partials/Footer";
-
-
-// Import Section Components
-
-// import ClientLogosSection from "@/components/sections/ClientLogosSection";
 
 
 // Section Wrapper (Only needed for Contact section now)
@@ -30,8 +26,6 @@ const Section = ({ id, title, highlight, children }) => (
     {children}
   </section>
 );
-
-// Data arrays removed - they are now inside their respective section components
 
 // ====== Main Component ======
 export default function Home() {
@@ -86,6 +80,7 @@ export default function Home() {
 
         {/* ===== Render Section Components ===== */}
         <ServicesSection />
+        <WhyUsSection /> {/* --- ADDED NEW SECTION HERE --- */}
         <PortfolioSection />
         <PricingSection />
         <TestimonialsSection />
@@ -107,7 +102,7 @@ export default function Home() {
       {/* ===== End of scrollable content area ===== */}
 
 
-    
+
 
       {/* Floating Feedback Button (position: fixed, so it's fine) */}
       <Link

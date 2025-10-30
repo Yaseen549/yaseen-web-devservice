@@ -178,53 +178,48 @@ export default function Header() {
                         </a>
                     </nav>
 
-                    {/* Auth Section */}
+                    {/* --- REDESIGNED AUTH SECTION --- */}
                     <div className="flex items-center gap-4">
                         <SignedOut>
                             <SignInButton mode="modal">
-                                <button className="bg-violet-600 px-4 py-2 rounded-lg font-semibold hover:bg-violet-700 transition">
+                                {/* Shrunk button */}
+                                <button className="bg-violet-600 px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-violet-700 transition">
                                     Sign In
                                 </button>
                             </SignInButton>
-                            <Link
-                                href="/sign-up"
-                                className="border border-violet-600 px-4 py-2 rounded-lg font-semibold text-violet-600 hover:bg-violet-700 hover:text-white transition"
-                            >
-                                Sign Up
-                            </Link>
                         </SignedOut>
 
                         <SignedIn>
                             <div className="relative" ref={accountRef}>
-                                {/* Avatar Button */}
+                                {/* Shrunk Avatar Button */}
                                 <button
                                     onClick={toggleAccountDropdown}
-                                    className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/60 border border-gray-700 rounded-full hover:bg-gray-700/60 transition"
+                                    className="flex items-center gap-1.5 p-1 bg-gray-800/60 border border-gray-700 rounded-full hover:bg-gray-700/60 transition"
                                 >
                                     <img
                                         src={user?.imageUrl}
                                         alt="User Avatar"
-                                        className="w-8 h-8 rounded-full border border-gray-700"
+                                        className="w-7 h-7 rounded-full border border-gray-700" // Shrunk avatar
                                     />
                                     <ChevronDown
-                                        className={`w-4 h-4 text-gray-400 transition-transform ${accountDropdownOpen ? "rotate-180" : ""}`}
+                                        className={`w-4 h-4 text-gray-400 transition-transform mr-1 ${accountDropdownOpen ? "rotate-180" : ""}`}
                                     />
                                 </button>
 
-                                {/* Dropdown Menu */}
+                                {/* Shrunk Dropdown Menu */}
                                 {accountDropdownOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-800 rounded-xl shadow-xl overflow-hidden z-50 animate-fadeIn">
-                                        <div className="px-4 py-3 border-b border-gray-800">
+                                    <div className="absolute right-0 mt-2 w-44 bg-gray-900 border border-gray-800 rounded-lg shadow-xl overflow-hidden z-50 animate-fadeIn">
+                                        <div className="px-3 py-2.5 border-b border-gray-800">
                                             <p className="text-sm font-semibold text-white truncate">
                                                 {user?.fullName || "User"}
                                             </p>
                                             <p className="text-xs text-gray-400 truncate">{user?.primaryEmailAddress?.emailAddress}</p>
                                         </div>
 
-                                        <div className="flex flex-col py-2 text-sm text-gray-300">
+                                        <div className="flex flex-col py-1.5 text-sm text-gray-300">
                                             <Link
                                                 href="/dashboard"
-                                                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 transition"
+                                                className="flex items-center gap-2.5 px-3 py-2 hover:bg-gray-800 transition"
                                                 onClick={() => setAccountDropdownOpen(false)}
                                             >
                                                 <LayoutDashboard className="w-4 h-4 text-violet-400" />
@@ -236,7 +231,7 @@ export default function Header() {
                                                     await signOut();
                                                     setAccountDropdownOpen(false);
                                                 }}
-                                                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-800 transition text-left w-full"
+                                                className="flex items-center gap-2.5 px-3 py-2 hover:bg-gray-800 transition text-left w-full"
                                             >
                                                 <LogOut className="w-4 h-4 text-rose-400" />
                                                 Sign Out
@@ -247,9 +242,10 @@ export default function Header() {
                             </div>
                         </SignedIn>
                     </div>
+                    {/* --- END OF REDESIGN --- */}
+
                 </div>
             </div>
         </header>
     );
 }
-

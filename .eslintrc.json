@@ -1,0 +1,94 @@
+{
+    "root": true,
+    "extends": [
+        "next/core-web-vitals",
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:jsx-a11y/recommended",
+        "plugin:tailwindcss/recommended",
+        "plugin:prettier/recommended"
+    ],
+    "plugins": [
+        "react",
+        "react-hooks",
+        "jsx-a11y",
+        "tailwindcss"
+    ],
+    "rules": {
+        // --- React & JSX Strictness ---
+        "react/jsx-no-literals": [
+            "warn",
+            {
+                "noStrings": true,
+                "ignoreProps": true,
+                "allowedStrings": []
+            }
+        ],
+        "react/jsx-boolean-value": [
+            "warn",
+            "never"
+        ],
+        "react/jsx-curly-spacing": [
+            "warn",
+            {
+                "when": "never",
+                "children": true
+            }
+        ],
+        "react/jsx-no-duplicate-props": "error",
+        "react/jsx-no-target-blank": "warn",
+        "react/no-unescaped-entities": "warn",
+        "react/self-closing-comp": "warn",
+        "react/jsx-key": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        // --- Tailwind & Code Style ---
+        "tailwindcss/classnames-order": "warn",
+        "tailwindcss/no-custom-classname": "off",
+        "prettier/prettier": [
+            "warn",
+            {
+                "singleQuote": false,
+                "semi": true,
+                "printWidth": 100,
+                "tabWidth": 4,
+                "endOfLine": "auto"
+            }
+        ],
+        // --- General Best Practices ---
+        "no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_"
+            }
+        ],
+        "no-console": [
+            "warn",
+            {
+                "allow": [
+                    "warn",
+                    "error"
+                ]
+            }
+        ],
+        "no-debugger": "error"
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        },
+        "tailwindcss": {
+            "callees": [
+                "classnames",
+                "clsx",
+                "ctl"
+            ],
+            "config": "tailwind.config.js"
+        }
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "es2022": true
+    }
+}

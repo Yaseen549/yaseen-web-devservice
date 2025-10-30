@@ -1,8 +1,8 @@
-// app/components/sections/TestimonialsSection.js
 "use client";
 
 import React from "react";
 import { motion } from "framer-motion";
+import { MessageSquareDashed } from "lucide-react"; // Icon for empty state
 
 // Section Wrapper
 const Section = ({ id, title, highlight, children }) => (
@@ -22,60 +22,51 @@ const cardHover = {
 };
 
 // Data specific to this section
-const testimonials = [
-    {
-        quote:
-            "Working with MockStudio was a game-changer. They delivered a high-quality product faster than we thought possible.",
-        name: "Alice Johnson",
-        title: "CEO, TechNova",
-        img: "https://placehold.co/100x100/a78bfa/171717?text=AJ",
-    },
-    {
-        quote:
-            "The team's attention to detail and creative solutions were outstanding. Highly recommended.",
-        name: "David Lee",
-        title: "Founder, Creative Labs",
-        img: "https://placehold.co/100x100/818cf8/171717?text=DL",
-    },
-    // Try removing this one — layout still stays centered
-    {
-        quote:
-            "Our new website has seen a 200% increase in conversions. Seamless and professional from start to finish.",
-        name: "Maria Garcia",
-        title: "Marketing Director, ScaleUp",
-        img: "https://placehold.co/100x100/f472b6/171717?text=MG",
-    },
-];
+// --- Set testimonials to an empty array to show the empty state ---
+const testimonials = [];
 
 export default function TestimonialsSection() {
     return (
         <Section id="testimonials" title="What Our" highlight="Clients Say">
-            {/* ✅ This wrapper centers the grid regardless of item count */}
             <div className="flex justify-center">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
-                    {testimonials.map((t, i) => (
-                        <motion.div
-                            key={i}
-                            whileHover={cardHover}
-                            className="bg-gray-950/60 backdrop-blur-sm border border-gray-800 hover:border-violet-500/50 rounded-xl p-8 shadow-lg flex flex-col cursor-pointer max-w-sm"
-                        >
-                            <p className="text-gray-300 italic mb-6 text-lg flex-grow">
-                                "{t.quote}"
-                            </p>
-                            <div className="mt-auto flex items-center gap-4 pt-4 border-t border-gray-700/50">
-                                <img
-                                    src={t.img}
-                                    alt={t.name}
-                                    className="w-12 h-12 rounded-full border-2 border-violet-400 object-cover"
-                                />
-                                <div>
-                                    <h4 className="font-semibold text-white">{t.name}</h4>
-                                    <p className="text-sm text-violet-300">{t.title}</p>
+                {/* --- Added conditional rendering --- */}
+                {testimonials.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
+                        {testimonials.map((t, i) => (
+                            <motion.div
+                                key={i}
+                                whileHover={cardHover}
+                                className="bg-gray-950/60 backdrop-blur-sm border border-gray-800 hover:border-violet-500/50 rounded-xl p-8 shadow-lg flex flex-col cursor-pointer max-w-sm"
+                            >
+                                <p className="text-gray-300 italic mb-6 text-lg flex-grow">
+                                    "{t.quote}"
+                                </p>
+                                <div className="mt-auto flex items-center gap-4 pt-4 border-t border-gray-700/50">
+                                    <img
+                                        src={t.img}
+                                        alt={t.name}
+                                        className="w-12 h-12 rounded-full border-2 border-violet-400 object-cover"
+                                    />
+                                    <div>
+                                        <h4 className="font-semibold text-white">{t.name}</h4>
+                                        <p className="text-sm text-violet-300">{t.title}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                ) : (
+                    // --- This is the new Empty State ---
+                    <div className="flex flex-col items-center justify-center py-16 px-8 bg-gray-950/60 border-2 border-dashed border-gray-800 rounded-xl text-center max-w-lg">
+                        <MessageSquareDashed className="w-12 h-12 text-gray-600 mb-4" />
+                        <h3 className="text-xl font-semibold text-white">
+                            Testimonials Coming Soon
+                        </h3>
+                        <p className="text-gray-400 mt-2">
+                            We're currently gathering feedback from our amazing clients. Check back soon to see what they have to say!
+                        </p>
+                    </div>
+                )}
             </div>
         </Section>
     );
