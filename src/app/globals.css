@@ -29,3 +29,35 @@ input[type="submit"],
 input[type="reset"] {
   cursor: pointer;
 }
+
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  /* Track color matches the background */
+  background-color: #000000;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  /* Thumb color */
+  background-color: #6d28d9;
+  /* A strong violet */
+  border-radius: 10px;
+  /* Border to match the track */
+  border: 2px solid #000000;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  /* Hover color */
+  background-color: #8b5cf6;
+  /* A lighter violet */
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #6d28d9 #000000;
+}

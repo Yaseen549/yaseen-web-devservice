@@ -1,34 +1,48 @@
-// components/admin_components/UserManagement.js
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
 import { CopyButton, LoadingSpinner } from "./ui";
+import { createPrivateSupabaseClient } from "@/lib/supabasePrivate";
 
 export default function UserManagement() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { getToken } = useAuth();
 
     const fetchAllUsers = async () => {
         setLoading(true);
         try {
-            const res = await fetch("/api/admin/all-users");
-            const json = await res.json();
-            if (json.error) {
-                console.error(json.error);
+            // 1️⃣ Get the Clerk JWT for RLS
+            const token = await getToken({ template: "supabase" });
+            if (!token) throw new Error("Unable to get auth token");
+
+            // 2️⃣ Create Supabase client with token
+            const supabase = createPrivateSupabaseClient(token);
+
+            // 3️⃣ Fetch users (RLS will enforce access)
+            const { data, error } = await supabase
+                .from("users")
+                .select("id, clerk_id, username, email, image_url, company, phone, location")
+                .order("username", { ascending: true });
+
+            if (error) {
+                console.error("Supabase fetch error:", error.message);
                 setUsers([]);
             } else {
-                setUsers(json.data || []);
+                setUsers(data || []);
             }
-        } catch (error) {
-            console.error("Failed to fetch all users:", error);
+        } catch (err) {
+            console.error("Failed to fetch all users:", err);
             setUsers([]);
         }
         setLoading(false);
     };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         fetchAllUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -84,4 +98,4 @@ export default function UserManagement() {
             </div>
         </div>
     );
-};
+}

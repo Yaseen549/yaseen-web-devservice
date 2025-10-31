@@ -16,8 +16,8 @@ const navLinks = [
 
 // Added a second list for demonstration, this structure is more scalable
 const legalLinks = [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
+    { label: "Privacy Policy", href: "/legal/privacy-policy" },
+    { label: "Terms of Service", href: "/legal/terms-of-use" },
 ];
 
 const socialLinks = [

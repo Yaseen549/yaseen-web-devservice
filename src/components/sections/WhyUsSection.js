@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import { LayoutDashboard, BrainCircuit, Zap } from "lucide-react";
 
 // Section Wrapper
@@ -16,16 +15,13 @@ const Section = ({ id, title, highlight, children }) => (
 
 // Reusable Feature Card
 const FeatureCard = ({ icon: Icon, title, description }) => (
-    <motion.div
-        whileHover={{ y: -5, transition: { type: "spring", stiffness: 300 } }}
-        className="bg-gray-950/60 backdrop-blur-sm border border-gray-800 rounded-xl p-6"
-    >
+    <div className="bg-gray-950/60 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
         <div className="mb-4">
             <Icon className="w-10 h-10 text-violet-400" />
         </div>
         <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
         <p className="text-gray-400">{description}</p>
-    </motion.div>
+    </div>
 );
 
 // The data for the features
