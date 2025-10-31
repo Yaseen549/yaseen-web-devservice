@@ -34,6 +34,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "api.microlink.io",
       },
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+        pathname: '**',
+      },
     ],
   },
 };

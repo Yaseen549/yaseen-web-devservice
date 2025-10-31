@@ -6,21 +6,21 @@ import { X, Check, Copy, Loader2 } from "lucide-react";
 
 // --- Constants ---
 export const STATUS_OPTIONS = ["active", "pending", "inactive"];
-export const STAGE_OPTIONS = ["planning", "design", "development", "testing", "deployment", "maintenance", "deployed"];
+export const STAGE_OPTIONS = ["planning", "design", "development", "testing", "deployment", "deployed"];
 
-// --- Modal ---
+// --- Modal (Light Mode) ---
 export const Modal = ({ children, onClose, title }) => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
         <div className="absolute inset-0" onClick={onClose}></div>
         <div
-            className="relative bg-gray-800 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-md m-4 z-10"
+            className="relative bg-white rounded-lg border border-slate-200 shadow-xl w-full max-w-md m-4 z-10"
             onClick={(e) => e.stopPropagation()}
         >
-            <div className="flex items-center justify-between p-4 border-b border-gray-700">
-                <h3 className="text-lg font-semibold text-white">{title}</h3>
+            <div className="flex items-center justify-between p-4 border-b border-slate-200">
+                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
                 <button
                     onClick={onClose}
-                    className="p-1 rounded-full text-gray-400 hover:bg-gray-700 hover:text-white transition-colors"
+                    className="p-1 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
                 >
                     <X className="w-5 h-5" />
                 </button>
@@ -32,43 +32,43 @@ export const Modal = ({ children, onClose, title }) => (
     </div>
 );
 
-// --- FormInput ---
+// --- FormInput (Light Mode) ---
 export const FormInput = ({ label, id, ...props }) => (
     <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor={id} className="block text-sm font-medium text-slate-700 mb-1">
             {label}
         </label>
         <input
             id={id}
             {...props}
-            className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all"
+            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
         />
     </div>
 );
 
-// --- FormSelect ---
+// --- FormSelect (Light Mode) ---
 export const FormSelect = ({ label, id, children, ...props }) => (
     <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor={id} className="block text-sm font-medium text-slate-700 mb-1">
             {label}
         </label>
         <select
             id={id}
             {...props}
-            className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all"
+            className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
         >
             {children}
         </select>
     </div>
 );
 
-// --- Button ---
+// --- Button (Light Mode) ---
 export const Button = ({ children, onClick, variant = "primary", className = "", ...props }) => {
-    const baseStyle = "px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed";
+    const baseStyle = "px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2";
     const variants = {
-        primary: "bg-violet-600 text-white hover:bg-violet-500 focus:ring-2 focus:ring-violet-400 focus:outline-none",
-        secondary: "bg-gray-700 text-gray-200 hover:bg-gray-600 focus:ring-2 focus:ring-gray-500 focus:outline-none",
-        danger: "bg-red-600 text-white hover:bg-red-500 focus:ring-2 focus:ring-red-400 focus:outline-none",
+        primary: "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
+        secondary: "bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 focus:ring-indigo-500",
+        danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
     };
     return (
         <button
@@ -81,12 +81,12 @@ export const Button = ({ children, onClick, variant = "primary", className = "",
     );
 };
 
-// --- StatusPill ---
+// --- StatusPill (Light Mode) ---
 export const StatusPill = ({ status }) => {
     const colors = {
-        active: "bg-green-600/20 text-green-300 border-green-500/30",
-        pending: "bg-yellow-600/20 text-yellow-300 border-yellow-500/30",
-        inactive: "bg-gray-600/20 text-gray-400 border-gray-500/30",
+        active: "bg-green-100 text-green-800 border-green-200",
+        pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+        inactive: "bg-slate-100 text-slate-600 border-slate-200",
     };
     return (
         <span className={`px-3 py-0.5 rounded-full text-xs font-medium capitalize border ${colors[status] || colors.inactive}`}>
@@ -95,14 +95,29 @@ export const StatusPill = ({ status }) => {
     );
 };
 
-// --- StagePill ---
+// --- StagePill (Light Mode) ---
 export const StagePill = ({ stage }) => (
-    <span className="px-3 py-0.5 rounded-full text-xs font-medium capitalize bg-gray-700/50 text-gray-300 border border-gray-600/50">
+    <span className="px-3 py-0.5 rounded-full text-xs font-medium capitalize bg-slate-100 text-slate-700 border border-slate-200">
         {stage}
     </span>
 );
 
-// --- CopyButton ---
+// --- MaintenancePill (Light Mode) ---
+export const MaintenancePill = ({ maintenance }) => {
+    const isTrue = !!maintenance; // Ensure it's a boolean
+    const text = isTrue ? "Active" : "Inactive";
+    const colorClass = isTrue
+        ? "bg-green-100 text-green-800 border-green-200" // Style for "Active"
+        : "bg-slate-100 text-slate-600 border-slate-200"; // Style for "Inactive"
+
+    return (
+        <span className={`px-3 py-0.5 rounded-full text-xs font-medium capitalize border ${colorClass}`}>
+            {text}
+        </span>
+    );
+};
+
+// --- CopyButton (Light Mode) ---
 export const CopyButton = ({ textToCopy }) => {
     const [isCopied, setIsCopied] = useState(false);
 
@@ -116,17 +131,17 @@ export const CopyButton = ({ textToCopy }) => {
     return (
         <button
             onClick={copy}
-            className="p-1 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+            className="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
         >
-            {isCopied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {isCopied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
         </button>
     );
 };
 
-// --- LoadingSpinner ---
+// --- LoadingSpinner (Light Mode) ---
 export const LoadingSpinner = ({ text = "Loading..." }) => (
     <tr>
-        <td colSpan="100%" className="px-6 py-12 text-center text-gray-400">
+        <td colSpan="100%" className="px-6 py-12 text-center text-slate-500">
             <div className="flex justify-center items-center gap-2">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 {text}

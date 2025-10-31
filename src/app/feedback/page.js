@@ -1,4 +1,3 @@
-// app/feedback/page.js
 "use client";
 
 import React, { useState } from "react";
@@ -6,10 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Bug, Lightbulb, MessageCircle } from "lucide-react";
 import StarsBackground from "@/components/StarsBackground";
 import SiteLogo from "@/components/siteLogo/SiteLogo";
-// import SiteLogo from "@/components/SiteLogo"; // <-- IMPORT
-// import StarsBackground from "@/components/StarsBackground"; // <-- IMPORT
-// Assuming you have this file set up
-// import { createPublicSupabaseClient } from "@/lib/supabasePublic";
+import { createPublicSupabaseClient } from "@/lib/supabasePublic";
 
 // ====== Feedback Type Card Component ======
 const FeedbackTypeCard = ({ icon: Icon, label, onClick, isActive }) => (
@@ -31,16 +27,19 @@ const FeedbackTypeCard = ({ icon: Icon, label, onClick, isActive }) => (
 // ====== Feedback Page Component ======
 export default function Feedback() {
     const [feedbackType, setFeedbackType] = useState("Feature Request");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const placeholders = {
-        "Bug Report": "Describe the bug in detail. What did you expect to happen? What actually happened?",
+        "Bug Report":
+            "Describe the bug in detail. What did you expect to happen? What actually happened?",
         "Feature Request": "Describe your brilliant idea. What problem would it solve?",
         "General Feedback": "What's on your mind? We're listening.",
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // const supabase = createPublicSupabaseClient();
+        const supabase = createPublicSupabaseClient();
+
         const email = e.target.email.value.trim();
         const message = e.target.message.value.trim();
 
@@ -49,11 +48,24 @@ export default function Feedback() {
             return;
         }
 
-        console.log("Feedback submitted (simulated):", {
-            email: email || "anon",
-            feedback_type: feedbackType,
-            message,
-        });
+        setIsSubmitting(true);
+
+        const { error } = await supabase.from("yms_feedback").insert([
+            {
+                email: email || null,
+                feedback_type: feedbackType,
+                message,
+            },
+        ]);
+
+        setIsSubmitting(false);
+
+        if (error) {
+            console.error("Error submitting feedback:", error.message);
+            alert("❌ Something went wrong. Please try again.");
+            return;
+        }
+
         alert("✅ Thank you for your feedback! We've received it.");
         e.target.reset();
         setFeedbackType("Feature Request");
@@ -61,9 +73,6 @@ export default function Feedback() {
 
     return (
         <main className="min-h-screen w-full bg-black text-gray-100 font-sans overflow-hidden">
-            {/* We removed the <style> tag, it's in app/layout.js now */}
-
-            {/* Background Canvas is now a component */}
             <StarsBackground />
 
             {/* ===== Header ===== */}
@@ -77,16 +86,14 @@ export default function Feedback() {
                         Back to Home
                     </Link>
 
-                    {/* Logo is now a component */}
                     <SiteLogo />
-
                 </div>
             </header>
 
             {/* ===== Feedback Form Section ===== */}
             <section className="relative z-10 flex items-center justify-center min-h-screen px-6 py-24">
                 <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                    {/* --- Left Column: Attractive Text --- */}
+                    {/* --- Left Column: Text --- */}
                     <div className="text-center md:text-left">
                         <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight">
                             Help Us Shape
@@ -139,11 +146,16 @@ export default function Feedback() {
                                 required
                                 className="bg-gray-900 border border-gray-800 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-violet-500 focus:outline-none transition"
                             />
+
                             <button
                                 type="submit"
-                                className="mt-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 px-6 py-3 rounded-lg text-lg font-semibold text-white shadow-lg shadow-violet-800/30 transition-all transform hover:scale-105 cursor-pointer"
+                                disabled={isSubmitting}
+                                className={`mt-2 px-6 py-3 rounded-lg text-lg font-semibold text-white shadow-lg shadow-violet-800/30 transition-all transform hover:scale-105 cursor-pointer ${isSubmitting
+                                        ? "bg-gray-700 cursor-not-allowed"
+                                        : "bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+                                    }`}
                             >
-                                Submit Feedback
+                                {isSubmitting ? "Submitting..." : "Submit Feedback"}
                             </button>
                         </form>
                     </div>

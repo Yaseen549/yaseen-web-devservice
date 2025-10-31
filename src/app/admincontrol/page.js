@@ -9,17 +9,31 @@ import {
     Menu,
     X,
     Users,
-    Package, // Using Package as a sample logo
+    Package,
+    Pen,
+    Mail,
+    Edit,
+    PersonStanding,
+    User2, // Using Package as a sample logo
 } from "lucide-react";
 import DashboardOverview from "../admin_components/DashboardOverview";
 import WebsiteList from "../admin_components/WebsiteList";
 import UserManagement from "../admin_components/UserManagement";
+import RequirementManagement from "../admin_components/RequirementManagement";
+import YMSContactContent from "../admin_components/YMSContactContent";
+import Feedback from "../feedback/page";
+import SuccessStoriesContent from "../admin_components/SuccessStoriesContent";
+import FeedbackContent from "../admin_components/FeedbackModel";
 
 // --- Data for Sidebar ---
 const navItems = [
     { name: "Dashboard", icon: LayoutDashboard, tab: "dashboard" },
     { name: "Website List", icon: Globe, tab: "websites" },
     { name: "Users", icon: Users, tab: "users" },
+    { name: "Requirements", icon: Pen, tab: "requirement" },
+    { name: "Contacts", icon: Mail, tab: "contacts" },
+    { name: "Feedbacks", icon: Edit, tab: "feedbacks" },
+    { name: "Testimonials", icon: Users, tab: "testimonials" },
     { name: "Settings", icon: Settings, tab: "settings" },
 ];
 
@@ -75,6 +89,14 @@ export default function AdminControl() {
                 return <WebsiteList setParentWebsites={setWebsites} />;
             case "users":
                 return <UserManagement />;
+            case "requirement":
+                return <RequirementManagement />;
+            case "contacts":
+                return <YMSContactContent />;
+            case "feedbacks":
+                return <FeedbackContent />;
+            case "testimonials":
+                return <SuccessStoriesContent />;
             case "settings":
                 return (
                     <div className="p-6 bg-white border border-slate-200 shadow-sm rounded-xl">
