@@ -225,12 +225,12 @@ export default function Header() {
                                         >
                                             About Us
                                         </DropdownItem>
-                                        <DropdownItem
+                                        {/* <DropdownItem
                                             href="/pages/join"
                                             icon={UserPlus}
                                         >
                                             Join Us
-                                        </DropdownItem>
+                                        </DropdownItem> */}
                                         <DropdownItem
                                             href="/pages/contact"
                                             icon={Mail}

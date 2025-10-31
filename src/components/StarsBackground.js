@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Settings, ChevronsRight, Rocket, Sparkles, Wind, EyeOff } from "lucide-react";
+import { Settings, ChevronsRight, Rocket, Sparkles, Wind, EyeOff, X } from "lucide-react";
 
 // This custom hook contains all the canvas logic.
 // It now accepts a 'settings' object to control animations.
@@ -26,7 +26,7 @@ const useStarsCanvas = (ref, settings) => {
         if (!ctx) return;
 
         let stars = [];
-        let spaceship;
+        let spaceship; // Spaceship is just declared, not initialized
         let animationId;
         const numStars = 500;
         const mouse = { x: undefined, y: undefined };
@@ -37,7 +37,7 @@ const useStarsCanvas = (ref, settings) => {
             canvas.height = window.innerHeight;
         };
 
-        // ====== Star Class ======
+        // ====== Star Class (No Changes) ======
         class Star {
             constructor(x, y, r, o) {
                 Object.assign(this, {
@@ -94,13 +94,15 @@ const useStarsCanvas = (ref, settings) => {
             }
         }
 
+
         // ====== Spaceship Class ======
         class Spaceship {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.vx = (Math.random() - 0.5) * 2;
-                this.vy = (Math.random() - 0.5) * 2;
+            constructor() {
+                // Initialize with 0s; spawn() will set the real values
+                this.x = 0;
+                this.y = 0;
+                this.vx = 0;
+                this.vy = 0;
                 this.size = 8;
                 this.angle = 0;
                 this.maxSpeed = 3;
@@ -108,6 +110,34 @@ const useStarsCanvas = (ref, settings) => {
                 this.acceleration = 0.2;
                 this.turnForce = 0.05;
                 this.turnBuffer = 100;
+            }
+
+            // NEW spawn method
+            spawn(canvasWidth, canvasHeight) {
+                const edge = Math.floor(Math.random() * 4);
+                const buffer = this.size * 3; // Spawn just off-screen
+
+                if (edge === 0) { // Top edge
+                    this.x = Math.random() * canvasWidth;
+                    this.y = -buffer;
+                    this.vx = (Math.random() - 0.5) * 2;
+                    this.vy = Math.random() * 1.5 + 1; // Fly down
+                } else if (edge === 1) { // Right edge
+                    this.x = canvasWidth + buffer;
+                    this.y = Math.random() * canvasHeight;
+                    this.vx = -(Math.random() * 1.5 + 1); // Fly left
+                    this.vy = (Math.random() - 0.5) * 2;
+                } else if (edge === 2) { // Bottom edge
+                    this.x = Math.random() * canvasWidth;
+                    this.y = canvasHeight + buffer;
+                    this.vx = (Math.random() - 0.5) * 2;
+                    this.vy = -(Math.random() * 1.5 + 1); // Fly up
+                } else { // Left edge
+                    this.x = -buffer;
+                    this.y = Math.random() * canvasHeight;
+                    this.vx = Math.random() * 1.5 + 1; // Fly right
+                    this.vy = (Math.random() - 0.5) * 2;
+                }
             }
 
             draw() {
@@ -225,28 +255,40 @@ const useStarsCanvas = (ref, settings) => {
         const init = () => {
             resize();
 
-            // (Re)create stars and spaceship
+            // (Re)create stars
             stars = Array.from({ length: numStars }, () => {
                 const x = Math.random() * canvas.width;
                 const y = Math.random() * canvas.height;
                 return new Star(x, y, Math.random() * 1.2, Math.random() * 0.5 + 0.2);
             });
 
-            spaceship = new Spaceship(canvas.width / 2, canvas.height / 2);
+            // IMPORTANT: Spaceship is set to null here.
+            // It will be created in the animate loop when toggled on.
+            spaceship = null;
         };
 
         // Animation loop
         const animate = () => {
             animationId = requestAnimationFrame(animate);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const currentSettings = settingsRef.current; // Get settings once per frame
 
-            // Read from the settingsRef inside the animation loop
-            if (settingsRef.current.showStars) {
+            // 1. Draw stars (if enabled)
+            if (currentSettings.showStars) {
                 stars.forEach((s) => s.update());
             }
 
-            if (settingsRef.current.showRocket && spaceship) {
+            // 2. Update and draw the rocket (if enabled)
+            if (currentSettings.showRocket) {
+                if (!spaceship) {
+                    // Create and spawn a new one if it doesn't exist
+                    spaceship = new Spaceship();
+                    spaceship.spawn(canvas.width, canvas.height);
+                }
                 spaceship.update();
+            } else {
+                // If rocket is disabled, destroy it
+                spaceship = null;
             }
         };
 
@@ -288,28 +330,86 @@ const ToggleSwitch = ({ label, icon: Icon, checked, onChange }) => (
         </div>
         <div className="relative">
             <input type="checkbox" className="sr-only" checked={checked} onChange={onChange} />
-            <div className={`block w-8 h-4 rounded-full transition-colors ${checked ? 'bg-violet-600' : 'bg-gray-600'}`}></div>
-            <div className={`dot absolute left-0.5 top-0.5 bg-white w-3 h-3 rounded-full transition-transform ${checked ? 'transform translate-x-4' : ''}`}></div>
+            <div className={`block w-8 h-4 rounded-full transition-colors ${checked ? "bg-violet-600" : "bg-gray-600"}`} />
+            <div className={`dot absolute left-0.5 top-0.5 bg-white w-3 h-3 rounded-full transition-transform ${checked ? "transform translate-x-4" : ""}`} />
         </div>
     </label>
 );
 
 // The React component that renders the canvas AND the settings panel
-export default function StarsBackgroundWithSettings() {
+export default function StarsBackgroundWithSettings({ isSettingsOpen, setIsSettingsOpen }) {
     const canvasRef = useRef(null);
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const panelRef = useRef(null);
+    const buttonRef = useRef(null);
+
+    // const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [settings, setSettings] = useState({
-        showRocket: true,
+        showRocket: false, // <-- Set to false by default
         starRipple: true,
         starTwinkle: true,
         showStars: true,
     });
 
+    // ✅ Load saved settings from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem("snippkit_animation_settings");
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                setSettings((prev) => ({ ...prev, ...parsed }));
+            } catch (e) {
+                console.error("Failed to parse saved settings:", e);
+            }
+        }
+    }, []);
+
+    // ✅ Save to localStorage whenever settings change
+    useEffect(() => {
+        localStorage.setItem("snippkit_animation_settings", JSON.stringify(settings));
+    }, [settings]);
+
+
     // Apply the canvas logic to the ref, passing in the settings
     useStarsCanvas(canvasRef, settings);
 
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (
+                isSettingsOpen &&
+                panelRef.current &&
+                !panelRef.current.contains(event.target) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(event.target)
+            ) {
+                // If click is outside panel AND outside the button, close the modal.
+                setIsSettingsOpen(false);
+            }
+        }
+
+        if (isSettingsOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isSettingsOpen]);
+
+
     const handleSettingChange = (key) => {
         setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    // Backdrop animation variants
+    const backdropVariants = {
+        visible: { opacity: 1 },
+        hidden: { opacity: 0 },
+    };
+
+    // Panel animation variants (Center Pop-up)
+    const panelVariants = {
+        visible: { opacity: 1, scale: 1, y: 0 },
+        hidden: { opacity: 0, scale: 0.9, y: 50 },
     };
 
     return (
@@ -318,63 +418,69 @@ export default function StarsBackgroundWithSettings() {
             <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none" />
 
             {/* Settings Open Button */}
-            <motion.button
-                className="fixed bottom-30 right-6 z-50 p-2 bg-gray-900/70 backdrop-blur-md text-white rounded-full shadow-lg border border-gray-700 hover:bg-violet-800 transition-colors"
-                onClick={() => setIsSettingsOpen(true)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                aria-label="Open animation settings"
-                initial={{ x: 0 }}
-                animate={{ x: isSettingsOpen ? "100%" : 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            >
-                <Settings className="w-4 h-4" />
-            </motion.button>
+            {/* <motion.button
+                           ref={buttonRef}
+                           className="fixed top-4 right-6 z-40 p-2 bg-gray-900/70 backdrop-blur-md 
+                          text-white rounded-full shadow-lg border border-gray-700 
+                          hover:bg-violet-800 transition-colors"
+                           onClick={() => setIsSettingsOpen(true)}
+                           whileHover={{ scale: 1.1 }}
+                           whileTap={{ scale: 0.9 }}
+                       >
+                           <Settings className="w-4 h-4" />
+                       </motion.button> */}
 
-            {/* Settings Panel */}
+
+            {/* Settings Panel (Modal Wrapper) */}
             <motion.div
-                className="fixed bottom-2 right-0 z-60 w-72 bg-gray-950/80 backdrop-blur-lg border border-gray-700 shadow-2xl rounded-l-2xl"
-                initial={{ x: "100%" }}
-                animate={{ x: isSettingsOpen ? 0 : "100%" }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                // Backdrop: Covers the entire viewport
+                className="fixed inset-0 z-50 flex items-center justify-center"
+                initial="hidden"
+                animate={isSettingsOpen ? "visible" : "hidden"} // Use isSettingsOpen for AnimatePresence effect
+                variants={backdropVariants}
+                transition={{ duration: 0.2 }}
+                style={{ pointerEvents: isSettingsOpen ? 'auto' : 'none' }} // Crucial for performance
             >
-                <div className="flex justify-between items-center p-3 border-b border-gray-700">
-                    <h3 className="text-base font-semibold text-white">Animation Settings</h3>
-                    <button
-                        className="p-1 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full"
-                        onClick={() => setIsSettingsOpen(false)}
-                        aria-label="Close settings"
-                    >
-                        <ChevronsRight className="w-5 h-5" />
-                    </button>
-                </div>
+                {/* 1. Dark overlay (Clicking here closes the card) */}
+                <motion.div
+                    className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                    onClick={() => setIsSettingsOpen(false)}
+                    // Set z-index lower than the panel itself
+                    style={{ zIndex: 10 }}
+                    variants={backdropVariants}
+                    transition={{ duration: 0.2 }}
+                />
 
-                <div className="p-3 space-y-1">
-                    <ToggleSwitch
-                        label="Show Rocket"
-                        icon={Rocket}
-                        checked={settings.showRocket}
-                        onChange={() => handleSettingChange('showRocket')}
-                    />
-                    <ToggleSwitch
-                        label="Star Twinkle"
-                        icon={Sparkles}
-                        checked={settings.starTwinkle}
-                        onChange={() => handleSettingChange('starTwinkle')}
-                    />
-                    <ToggleSwitch
-                        label="Mouse Ripple"
-                        icon={Wind}
-                        checked={settings.starRipple}
-                        onChange={() => handleSettingChange('starRipple')}
-                    />
-                    <ToggleSwitch
-                        label="Show Stars"
-                        icon={EyeOff}
-                        checked={settings.showStars}
-                        onChange={() => handleSettingChange('showStars')}
-                    />
-                </div>
+                <motion.div
+                    ref={panelRef}
+                    // Panel: Centered in the middle of the screen
+                    className="relative z-20 w-full max-w-sm bg-gray-950/90 border border-gray-700 shadow-2xl rounded-xl overflow-hidden"
+                    variants={panelVariants}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                >
+                    {/* Header */}
+                    <div className="flex justify-between items-center p-4 border-b border-gray-700">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                            <Settings className="w-5 h-5 text-violet-400" /> Animation Controls
+                        </h3>
+                        {/* 2. Changed to X icon */}
+                        <button
+                            className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full transition-colors"
+                            onClick={() => setIsSettingsOpen(false)}
+                            aria-label="Close settings"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    {/* Toggles */}
+                    <div className="p-4 space-y-1">
+                        <ToggleSwitch label="Show Rocket" icon={Rocket} checked={settings.showRocket} onChange={() => handleSettingChange('showRocket')} />
+                        <ToggleSwitch label="Star Twinkle" icon={Sparkles} checked={settings.starTwinkle} onChange={() => handleSettingChange('starTwinkle')} />
+                        <ToggleSwitch label="Mouse Ripple" icon={Wind} checked={settings.starRipple} onChange={() => handleSettingChange('starRipple')} />
+                        <ToggleSwitch label="Show Stars" icon={EyeOff} checked={settings.showStars} onChange={() => handleSettingChange('showStars')} />
+                    </div>
+                </motion.div>
             </motion.div>
         </>
     );
