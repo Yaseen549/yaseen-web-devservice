@@ -68,7 +68,7 @@ export default function TestimonialsSection() {
 
                         <a
                             href="/client-say"
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md hover:bg-green-100 text-green-700 bg-green-200 transition-all duration-300"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md hover:bg-violet-100 text-violet-700 bg-violet-200 transition-all duration-300"
                         >
                             <Star size={16} />
                             Send Testimonial
