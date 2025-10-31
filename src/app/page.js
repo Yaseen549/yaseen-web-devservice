@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   ArrowRight,
   ChevronDown,
@@ -35,12 +35,22 @@ const Section = ({ id, title, highlight, children }) => (
   </section>
 );
 
+
+
 // ====== Main Component ======
 export default function Home() {
+
+  // const [settings, setSettings] = useState(defaultSettings);
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
     // Main container is now a flex column that takes the full screen height
     <main className="h-screen w-full bg-black text-gray-100 font-sans flex flex-col overflow-y-hidden">
-      <StarsBackground />
+      <StarsBackground
+        setIsSettingsOpen={setIsSettingsOpen}
+        isSettingsOpen={isSettingsOpen}
+      />
 
       <Header />
 
@@ -67,10 +77,13 @@ export default function Home() {
         </Section>
 
         {/* Floating Buttons (Compact Style) */}
-        <FloatingButtons />
+        {/* <FloatingButtons /> */}
 
 
-        <Footer />
+        <Footer
+          setIsSettingsOpen={setIsSettingsOpen}
+          isSettingsOpen={isSettingsOpen}
+        />
       </div>
     </main>
   );

@@ -4,31 +4,26 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
 import ProjectList from "@/components/dashboard/ProjectList";
-import Header from "../partials/Header";
 import { createPrivateSupabaseClient } from "@/lib/supabasePrivate";
-import {
-    Mail,
-    Phone,
-    Building,
-    MapPin,
-} from "lucide-react";
+import Footer from "../partials/Footer";
 
 // --- User Header ---
 function UserHeader({ user }) {
     return (
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
             <div className="flex items-center gap-3">
                 <Image
                     src={user.image_url || "/default-avatar.png"}
-                    alt={user.display_name || "Profile Picture"}
-                    width={32}
-                    height={32}
+                    alt={user.username || "Profile Picture"}
+                    width={48}
+                    height={48}
                     className="rounded-full border-2 border-gray-800"
                 />
                 <div>
-                    <h1 className="text-lg font-semibold text-white">
+                    <h1 className="text-2xl font-semibold text-white">
                         Welcome, {user.username || "User"} 👋
                     </h1>
+                    <p className="text-gray-400 text-sm">{user.email}</p>
                 </div>
             </div>
         </div>
@@ -38,10 +33,8 @@ function UserHeader({ user }) {
 // --- Profile Details ---
 function ProfileDetails({ user }) {
     return (
-        <aside className="self-start">
-            <h3 className="text-base font-semibold text-white mb-3">
-                Profile Details
-            </h3>
+        <aside className="bg-gray-900/30 rounded-lg p-6 sticky top-32">
+            <h3 className="text-lg font-semibold text-white mb-4">Profile Details</h3>
             <dl className="divide-y divide-gray-800 text-sm">
                 <DetailRow label="Email" value={user.email} />
                 <DetailRow label="Phone" value={user.phone || "-"} />
@@ -62,14 +55,11 @@ function DetailRow({ label, value }) {
 }
 
 // --- Main Dashboard Page ---
-export default function DashboardPage({}) {
+export default function DashboardPage() {
     const { getToken, userId } = useAuth();
-
-    console.log(userId);
-    
-
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -79,22 +69,13 @@ export default function DashboardPage({}) {
                 const token = await getToken({ template: "supabase" });
                 const supabase = createPrivateSupabaseClient(token);
 
-                console.log(supabase);
-                
-
                 const { data, error } = await supabase
                     .from("users")
                     .select("*, websites(*)")
                     .eq("clerk_id", userId)
                     .maybeSingle();
 
-                    console.log("data", data);
-                    
-
-                if (error) {
-                    console.error("Supabase query error:", error.message);
-                }
-
+                if (error) console.error("Supabase query error:", error.message);
                 setUserData(data);
             } catch (err) {
                 console.error("Error fetching user data:", err);
@@ -108,7 +89,7 @@ export default function DashboardPage({}) {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex flex-col justify-center items-center bg-black text-white p-4">
+            <div className="min-h-screen flex justify-center items-center bg-black text-white p-4">
                 <p>Loading user data...</p>
             </div>
         );
@@ -116,7 +97,7 @@ export default function DashboardPage({}) {
 
     if (!userData) {
         return (
-            <div className="min-h-screen flex flex-col justify-center items-center bg-black text-white p-4">
+            <div className="min-h-screen flex justify-center items-center bg-black text-white p-4">
                 <p>No user data found.</p>
             </div>
         );
@@ -135,20 +116,27 @@ export default function DashboardPage({}) {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white p-4 pt-20">
-            <Header />
+        <>
+            <div className="min-h-screen bg-black text-white pt-24">
 
-            <UserHeader user={user} />
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+                    <UserHeader user={user} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2">
-                    <ProjectList websites={user.websites} />
-                </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Projects */}
+                        <div className="lg:col-span-2">
+                            <ProjectList websites={user.websites} />
+                        </div>
 
-                <div className="lg:col-span-1">
-                    <ProfileDetails user={user} />
-                </div>
+                        {/* Profile Sidebar */}
+                        <div className="lg:col-span-1">
+                            <ProfileDetails user={user} />
+                        </div>
+                    </div>
+                </main>
             </div>
-        </div>
+
+            <Footer />
+        </>
     );
 }

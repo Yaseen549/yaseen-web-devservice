@@ -14,8 +14,6 @@ import {
     ChevronRight,
     Wrench, // Icon for maintenance plan
 } from "lucide-react";
-import Header from "@/app/partials/Header";
-
 // Initialize Supabase admin client
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -194,7 +192,6 @@ export default async function ProjectDetailsPage({ params }) {
     return (
         // --- UPDATED: Root div is now a flex column ---
         <div className="min-h-screen bg-black text-white flex flex-col">
-            <Header />
 
             {/* --- NEW: Centering wrapper for all content BELOW the header --- */}
             <main className="flex-1 flex items-center justify-center p-4 md:p-8">

@@ -2,7 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { MessageSquareDashed } from "lucide-react"; // Icon for empty state
+import { MessageSquareDashed, Star } from "lucide-react";
+// import TooltipButton from "@/components/Footer/TooltipButton"; // adjust the path
 
 // Section Wrapper
 const Section = ({ id, title, highlight, children }) => (
@@ -22,14 +23,13 @@ const cardHover = {
 };
 
 // Data specific to this section
-// --- Set testimonials to an empty array to show the empty state ---
-const testimonials = [];
+const testimonials = []; // Empty to show the empty state
 
 export default function TestimonialsSection() {
+
     return (
         <Section id="testimonials" title="What Our" highlight="Clients Say">
-            <div className="flex justify-center">
-                {/* --- Added conditional rendering --- */}
+            <div className="flex flex-col items-center gap-6">
                 {testimonials.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
                         {testimonials.map((t, i) => (
@@ -56,15 +56,23 @@ export default function TestimonialsSection() {
                         ))}
                     </div>
                 ) : (
-                    // --- This is the new Empty State ---
-                    <div className="flex flex-col items-center justify-center py-16 px-8 bg-gray-950/60 border-2 border-dashed border-gray-800 rounded-xl text-center max-w-lg">
-                        <MessageSquareDashed className="w-12 h-12 text-gray-600 mb-4" />
+                    <div className="flex flex-col items-center justify-center py-16 px-8 bg-gray-950/60 border-2 border-dashed border-gray-800 rounded-xl text-center max-w-lg gap-4">
+                        <MessageSquareDashed className="w-12 h-12 text-gray-600" />
                         <h3 className="text-xl font-semibold text-white">
                             Testimonials Coming Soon
                         </h3>
-                        <p className="text-gray-400 mt-2">
-                            We're currently gathering feedback from our amazing clients. Check back soon to see what they have to say!
+                        <p className="text-gray-400">
+                            We're currently gathering feedback from our amazing clients. Check
+                            back soon to see what they have to say!
                         </p>
+
+                        <a
+                            href="/client-say"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md hover:bg-green-100 text-green-700 bg-green-200 transition-all duration-300"
+                        >
+                            <Star size={16} />
+                            Send Testimonial
+                        </a>
                     </div>
                 )}
             </div>
