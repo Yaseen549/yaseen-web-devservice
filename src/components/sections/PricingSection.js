@@ -1,11 +1,9 @@
-// app/components/sections/PricingSection.js
 "use client";
 
 import React from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 
-// Section Wrapper
 const Section = ({ id, title, highlight, children }) => (
   <section id={id} className="max-w-7xl mx-auto px-6 py-24 z-10">
     <h2 className="text-4xl font-bold text-center mb-16">
@@ -15,30 +13,47 @@ const Section = ({ id, title, highlight, children }) => (
   </section>
 );
 
-// Data specific to this section
 const pricing = [
-    {
-      title: "Starter",
-      price: "$49",
-      features: ["1-3 Page Site", "Responsive Design", "Contact Form", "Basic SEO", "1 Week Delivery"],
-    },
-    {
-      title: "Growth",
-      price: "$199",
-      features: [
-        "Up to 5 Pages", "Custom UI/UX", "CMS Integration", "Blog Setup",
-        "Analytics Integration", "Priority Support",
-      ],
-      popular: true,
-    },
-    {
-      title: "Pro",
-      price: "$599",
-      features: [
-        "Full-stack Web App", "Database & Auth", "API Integration", "Dashboard",
-        "Advanced Analytics", "Dedicated Support",
-      ],
-    },
+  {
+    title: "Starter",
+    price: "$99",
+    tagline: "Perfect for individuals or small startups getting online.",
+    features: [
+      "Up to 3 Pages (Landing, About, Contact)",
+      "Responsive Design (Mobile + Desktop)",
+      "Basic SEO Setup",
+      "Contact Form Integration",
+      "Delivery in 5-7 Days",
+      "Email Support",
+    ],
+  },
+  {
+    title: "Professional",
+    price: "$299",
+    tagline: "Ideal for growing businesses that need a scalable web presence.",
+    popular: true,
+    features: [
+      "Up to 6 Custom Pages",
+      "Custom UI/UX Design",
+      "CMS (Blog / Products / Content)",
+      "Google Analytics + Search Console Setup",
+      "Basic Animations & Interactivity",
+      "Priority Support (24-48 hrs)",
+    ],
+  },
+  {
+    title: "Ultimate",
+    price: "$799",
+    tagline: "For teams who want advanced, fully custom web solutions.",
+    features: [
+      "Full-Stack Web App (with Auth + Database)",
+      "Admin Dashboard",
+      "API + Third-Party Integrations",
+      "Custom Animations / Dynamic Components",
+      "Performance & SEO Optimization",
+      "Dedicated Slack / Zoom Support",
+    ],
+  },
 ];
 
 export default function PricingSection() {
@@ -48,11 +63,11 @@ export default function PricingSection() {
         {pricing.map((p) => (
           <motion.div
             key={p.title}
-            className={`relative flex flex-col bg-gray-950/60 backdrop-blur-sm rounded-xl text-center shadow-lg divide-y divide-gray-800 cursor-pointer ${
-              p.popular
-                ? "border-2 border-violet-500 md:scale-105 shadow-2xl shadow-violet-900/30"
-                : "border border-gray-800"
-            }`}
+            whileHover={{ y: -5, scale: 1.02 }}
+            className={`relative flex flex-col bg-gray-950/60 backdrop-blur-sm rounded-2xl text-center shadow-xl divide-y divide-gray-800 border ${p.popular
+                ? "border-violet-500 md:scale-105 shadow-violet-900/20"
+                : "border-gray-800"
+              }`}
           >
             {p.popular && (
               <div className="absolute -top-3 right-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">
@@ -60,8 +75,9 @@ export default function PricingSection() {
               </div>
             )}
             <div className="p-8">
-              <h3 className="text-xl font-bold text-violet-400 mb-2">{p.title}</h3>
-              <p className="text-4xl font-extrabold text-white mb-4">{p.price}</p>
+              <h3 className="text-2xl font-bold text-white mb-2">{p.title}</h3>
+              <p className="text-gray-400 text-sm mb-4">{p.tagline}</p>
+              <p className="text-5xl font-extrabold text-white mb-6">{p.price}</p>
             </div>
             <ul className="p-8 text-gray-400 space-y-3 text-left text-sm flex-grow">
               {p.features.map((f) => (

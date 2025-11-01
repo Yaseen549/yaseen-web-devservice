@@ -457,13 +457,13 @@ export default function Header() {
                                 >
                                     About Us
                                 </DropdownItem>
-                                <DropdownItem
+                                {/* <DropdownItem
                                     href="/pages/join"
                                     icon={UserPlus}
                                     onClick={closeMobileMenu}
                                 >
                                     Join Us
-                                </DropdownItem>
+                                </DropdownItem> */}
                                 <DropdownItem
                                     href="/pages/contact"
                                     icon={Mail}

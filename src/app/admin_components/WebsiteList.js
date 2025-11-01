@@ -19,14 +19,17 @@ import UserSearchInput from "./UserSearchInput";
 import { createPrivateSupabaseClient } from "@/lib/supabasePrivate";
 // Assuming you have this component from your previous requests
 import ConfirmWithInputDialog from "./dialogBoxes/ConfirmWithInputDialog";
+import CreateWebsiteForm from "./websiteLIstComponents/CreateWebsiteForm";
+// NEW: Import the standalone form component
+// import CreateWebsiteForm from "./CreateWebsiteForm";
 
 // --- CONSTANTS ---
 const CONFIRMATION_TEXT_SINGLE = "DELETE";
 const CONFIRMATION_TEXT_BULK = "DELETE ALL";
 const FILTER_ALL = "all";
 
-// --- COMPONENT: Form Toggle ---
-const FormToggle = ({ label, id, name, checked, onChange, helpText }) => (
+// --- COMPONENT: Form Toggle (Moved to be used by both components) ---
+export const FormToggle = ({ label, id, name, checked, onChange, helpText }) => (
     <div>
         <label htmlFor={id} className="text-sm font-medium text-slate-700 block mb-2">{label}</label>
         <div className="flex items-center space-x-3">
@@ -36,13 +39,13 @@ const FormToggle = ({ label, id, name, checked, onChange, helpText }) => (
                 aria-checked={checked}
                 onClick={() => onChange({ target: { name, checked: !checked, type: 'checkbox' } })}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 
-					border-transparent transition-colors duration-200 ease-in-out focus:outline-none 
-					focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${checked ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                    border-transparent transition-colors duration-200 ease-in-out focus:outline-none 
+                    focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${checked ? 'bg-indigo-600' : 'bg-slate-200'}`}
             >
                 <span
                     aria-hidden="true"
                     className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 
-						transition duration-200 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'}`}
+                        transition duration-200 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'}`}
                 />
             </button>
             <span className={`text-sm ${checked ? 'text-slate-900 font-medium' : 'text-slate-500'}`}>
@@ -82,16 +85,13 @@ export default function WebsiteList({ setParentWebsites }) {
     const [selectedIds, setSelectedIds] = useState(new Set());
 
     // Modal States
-    const [showCreateModal, setShowCreateModal] = useState(false);
+    // REMOVED: const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
     const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
 
     // Form States
-    const [newProject, setNewProject] = useState({
-        label: "", url: "", clerk_id: "", status: "pending", development_stage: "planning",
-        logo: "", maintenance: false
-    });
+    // REMOVED: const [newProject, setNewProject] = useState({ /* ... */ });
     const [editingProject, setEditingProject] = useState(null);
 
     const { getToken } = useAuth();
@@ -123,9 +123,9 @@ export default function WebsiteList({ setParentWebsites }) {
             const { data, error } = await supabase
                 .from("websites")
                 .select(`
-					id, label, url, clerk_id, status, development_stage, logo, maintenance,
-					user:users(username)
-				`)
+                    id, label, url, clerk_id, status, development_stage, logo, maintenance,
+                    user:users(username)
+                `)
                 .order("label", { ascending: true });
 
             if (error) throw error;
@@ -147,28 +147,7 @@ export default function WebsiteList({ setParentWebsites }) {
     }, [supabase]);
 
     // --- 3. CRUD Operations (Optimized) ---
-    const createWebsite = async (e) => {
-        e.preventDefault();
-        if (!newProject.clerk_id) return alert("Please select a user.");
-        if (!supabase) return;
-
-        setIsProcessing(true);
-        try {
-            const { data, error } = await supabase
-                .from("websites")
-                .insert([newProject]);
-
-            if (error) throw error;
-
-            await fetchWebsites(); // Refetch
-            setShowCreateModal(false);
-            setNewProject({ label: "", url: "", clerk_id: "", status: "pending", development_stage: "planning", logo: "", maintenance: false });
-        } catch (err) {
-            console.error("Failed to create website:", err);
-            alert("An unexpected error occurred.");
-        }
-        setIsProcessing(false);
-    };
+    // REMOVED: createWebsite function
 
     const updateWebsite = async (e) => {
         e.preventDefault();
@@ -304,10 +283,7 @@ export default function WebsiteList({ setParentWebsites }) {
     };
 
     // --- 7. Form Handlers ---
-    const handleNewProjectChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setNewProject(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
-    };
+    // REMOVED: handleNewProjectChange function
 
     const handleEditProjectChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -330,7 +306,7 @@ export default function WebsiteList({ setParentWebsites }) {
                     <StatsCard title="Maintenance Plan" value={stats.maintenance} icon={Wrench} colorClass="bg-slate-100 text-slate-600" />
                 </div>
 
-                {/* Filter & Search Bar */}
+                {/* Filter & Search Bar - Includes New Create Form */}
                 <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-center gap-2 flex-wrap">
                         {[FILTER_ALL, ...STATUS_OPTIONS].map((status) => (
@@ -346,15 +322,20 @@ export default function WebsiteList({ setParentWebsites }) {
                             </button>
                         ))}
                     </div>
-                    <div className="relative w-full sm:w-64">
-                        <Search className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input
-                            type="text"
-                            placeholder="Search by name, URL, user..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        />
+                    <div className="flex items-center gap-4">
+                        {/* NEW COMPONENT INTEGRATION */}
+                        <CreateWebsiteForm onSuccess={fetchWebsites} />
+                        {/* END NEW COMPONENT INTEGRATION */}
+                        <div className="relative w-full sm:w-64">
+                            <Search className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                            <input
+                                type="text"
+                                placeholder="Search by name, URL, user..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -476,44 +457,7 @@ export default function WebsiteList({ setParentWebsites }) {
             </div>
 
             {/* --- Modals --- */}
-            {showCreateModal && (
-                <Modal title="Create New Project" onClose={() => setShowCreateModal(false)}>
-                    <form onSubmit={createWebsite} className="flex flex-col gap-5">
-                        <FormInput label="Project Name" id="label" name="label" value={newProject.label} onChange={handleNewProjectChange} required />
-                        <FormInput label="Project URL" id="url" name="url" type="url" placeholder="https://example.com" value={newProject.url} onChange={handleNewProjectChange} required />
-                        <FormInput label="Logo URL" id="logo" name="logo" type="url" placeholder="https://example.com/logo.png" value={newProject.logo} onChange={handleNewProjectChange} />
-                        <UserSearchInput
-                            label="User"
-                            id="clerk_id"
-                            value={newProject.clerk_id}
-                            onChange={handleNewProjectChange}
-                            required
-                        />
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormSelect label="Status" id="status" name="status" value={newProject.status} onChange={handleNewProjectChange}>
-                                {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
-                            </FormSelect>
-                            <FormSelect label="Development Stage" id="development_stage" name="development_stage" value={newProject.development_stage} onChange={handleNewProjectChange}>
-                                {STAGE_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
-                            </FormSelect>
-                        </div>
-                        <FormToggle
-                            label="Maintenance Plan"
-                            id="maintenance"
-                            name="maintenance"
-                            checked={newProject.maintenance}
-                            onChange={handleNewProjectChange}
-                            helpText="If active, this project has an ongoing maintenance plan."
-                        />
-                        <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-slate-200">
-                            <Button type="button" variant="secondary" onClick={() => setShowCreateModal(false)}>Cancel</Button>
-                            <Button type="submit" variant="primary" disabled={isProcessing || !newProject.clerk_id}>
-                                {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Project'}
-                            </Button>
-                        </div>
-                    </form>
-                </Modal>
-            )}
+            {/* REMOVED: Create Modal section */}
 
             {showEditModal && editingProject && (
                 <Modal title="Edit Project" onClose={() => setShowEditModal(null)}>
