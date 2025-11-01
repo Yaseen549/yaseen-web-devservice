@@ -31,7 +31,7 @@ export default function JoinPage() {
           <div className="flex justify-center">
              <a
                 // Replace '#' with your actual careers link or email
-                href="mailto:careers@mockstudio.example.com"
+                href="mailto:contact@snippkit.com"
                 className="inline-flex bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 px-8 py-3 rounded-lg text-lg font-semibold items-center gap-2 transition-all transform hover:scale-105 shadow-lg shadow-violet-800/30 cursor-pointer"
             >
                 See Open Positions <ArrowRight className="w-4 h-4" />
